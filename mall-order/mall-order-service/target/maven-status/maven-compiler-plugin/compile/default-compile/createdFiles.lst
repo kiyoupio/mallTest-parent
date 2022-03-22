@@ -1,0 +1,16 @@
+com\yangpai\order\service\controller\PayController.class
+com\yangpai\order\service\component\IgnoreUrls.class
+com\yangpai\order\service\controller\NormalOrderController.class
+com\yangpai\order\service\service\impl\RecycleOrderServiceImpl.class
+com\yangpai\order\service\config\ResourceServerConfig.class
+com\yangpai\order\service\service\NormalOrderService.class
+com\yangpai\order\service\mapper\NormalOrderMapper.class
+com\yangpai\order\service\service\RecycleOrderService.class
+com\yangpai\order\service\controller\RecycleOrderController.class
+com\yangpai\order\service\config\AliPayConfig.class
+com\yangpai\order\service\OrderApplication.class
+com\yangpai\order\service\properties\AliPayProperties.class
+com\yangpai\order\service\config\SwaggerConfig.class
+com\yangpai\order\service\mapper\RecycleOrderMapper.class
+com\yangpai\order\service\service\impl\PayService.class
+com\yangpai\order\service\service\impl\NormalOrderServiceImpl.class

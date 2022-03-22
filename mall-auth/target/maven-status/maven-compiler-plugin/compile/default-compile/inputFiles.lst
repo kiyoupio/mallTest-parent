@@ -1,0 +1,7 @@
+D:\mallTest-parent\mall-auth\src\main\java\com\yangpai\auth\config\SecurityConfiguration.java
+D:\mallTest-parent\mall-auth\src\main\java\com\yangpai\auth\config\AuthorizationServerConfiguration.java
+D:\mallTest-parent\mall-auth\src\main\java\com\yangpai\auth\AuthApplication.java
+D:\mallTest-parent\mall-auth\src\main\java\com\yangpai\auth\utils\TokenUtils.java
+D:\mallTest-parent\mall-auth\src\main\java\com\yangpai\auth\constant\AuthConstant.java
+D:\mallTest-parent\mall-auth\src\main\java\com\yangpai\auth\impl\UserDetailServiceImpl.java
+D:\mallTest-parent\mall-auth\src\main\java\com\yangpai\auth\client\UserClient.java

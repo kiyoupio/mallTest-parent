@@ -1,0 +1,8 @@
+com\yangpai\auth\AuthApplication.class
+com\yangpai\auth\impl\UserDetailServiceImpl.class
+com\yangpai\auth\config\AuthorizationServerConfiguration.class
+com\yangpai\auth\config\SecurityConfiguration.class
+com\yangpai\auth\client\UserClient.class
+com\yangpai\auth\utils\TokenUtils.class
+com\yangpai\auth\constant\AuthConstant.class
+com\yangpai\auth\client\UserClient$UserClientFallback.class

@@ -1,0 +1,17 @@
+server:
+  port: 9090
+#配置 配置中心的服务地址
+spring:
+  application:
+    name: mall-gateway
+  cloud:
+    nacos:
+      #注册中心配置
+      discovery:
+        server-addr: 106.15.126.80:8848
+      #配置中心的配置
+      config:
+        #配置中心地址
+        server-addr: 106.15.126.80:8848
+        #配置文件扩展名称
+        file-extension: yml

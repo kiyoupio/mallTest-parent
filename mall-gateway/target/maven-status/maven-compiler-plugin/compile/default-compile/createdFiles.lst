@@ -1,0 +1,4 @@
+com\yangpai\gateway\filter\RequestLogFilter.class
+com\yangpai\gateway\component\GateWayApiDocs.class
+com\yangpai\gateway\GatewayApplication.class
+com\yangpai\gateway\controller\SwaggerResourceController.class

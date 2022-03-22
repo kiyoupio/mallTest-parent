@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yangpai.commodity.server.mapper.CommodityMapper">
+    <resultMap id="Commodity" type="com.yangpai.commodity.server.entity.Commodity">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="price" column="price"/>
+        <result property="skuName" column="sku_name"/>
+        <result property="comment" column="comment"/>
+        <result property="count" column="count"/>
+        <result property="status" column="status"/>
+        <result property="skuType" column="sku_type"/>
+        <collection property="skuPicList" javaType="java.util.List" ofType="java.lang.String">
+            <id column="pic_path" javaType="java.lang.String"/>
+        </collection>
+    </resultMap>
+
+</mapper>

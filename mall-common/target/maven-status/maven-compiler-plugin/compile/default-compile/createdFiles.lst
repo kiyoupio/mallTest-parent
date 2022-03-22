@@ -1,0 +1,4 @@
+com\yangpai\conmon\baseclass\BaseEntity.class
+com\yangpai\conmon\service\RedisService.class
+com\yangpai\conmon\utils\SecurityUtils.class
+com\yangpai\conmon\component\ApiResult.class
