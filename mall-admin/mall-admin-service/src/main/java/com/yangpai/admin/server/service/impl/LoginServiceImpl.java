@@ -44,10 +44,10 @@ public class LoginServiceImpl implements LoginService {
     private AdminUserService adminUserService;
 
     /**
-     * 配置文件中客户端配置
+     * http请求头
      */
     @Resource
-    private OAuth2ClientProperties oAuth2ClientProperties;
+    private HttpHeaders httpHeaders;
 
     /**
      * 配置文件中Oauth2 resource配置
@@ -58,17 +58,12 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public ResponseEntity<OAuth2AccessToken> login(LoginRequestDTO loginRequestDTO) {
         AdminUser user = adminUserService.getOne(new LambdaQueryWrapper<AdminUser>()
+                .select(AdminUser::getUserName).select(AdminUser::getPassword)
                 .eq(AdminUser::getUserName, loginRequestDTO.getUsername()));
         log.info("{}:登录获取user:{}", this.getClass().getSimpleName(), user.toString());
         if (!EncodeUtil.matches(loginRequestDTO.getPassword(), user.getPassword())){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        // 客户端认证信息
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set(AdminConstants.AUTHORIZATION_KEY, StringUtils.join(AdminConstants.BASIC_KEY, Base64.getEncoder().encodeToString(
-                StringUtils.join(Arrays.asList(oAuth2ClientProperties.getClientId(), oAuth2ClientProperties.getClientSecret()),
-                        AdminConstants.SPLIT).getBytes())
-        ));
         // 请求参数
         // map-链表：一个key多个value
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>(4);
