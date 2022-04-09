@@ -59,7 +59,7 @@ public class AdminUserController {
      */
     @GetMapping("user/get/{userName}")
     public AdminUser getByUserName(@PathVariable("userName")String userName){
-        log.debug("用户{}获取信息", userName);
+        log.info("用户[{}]获取信息", userName);
         return adminUserService.getAdminUserByUserName(userName);
     }
 

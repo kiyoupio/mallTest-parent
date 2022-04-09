@@ -3,6 +3,7 @@ package com.yangpai.auth.impl;
 import com.yangpai.admin.core.entity.AdminRole;
 import com.yangpai.admin.core.entity.AdminUser;
 import com.yangpai.auth.client.UserClient;
+import com.yangpai.auth.impl.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,6 +26,11 @@ import java.util.List;
 @Slf4j
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
+    /**
+     * redis服务
+     */
+    @Resource
+    private RedisService redisService;
 
     /**
      * 远程调用客户端
@@ -41,22 +47,25 @@ public class UserDetailServiceImpl implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AdminUser user = userClient.getByUserName(username);
+        long start = System.currentTimeMillis();
+        AdminUser user = redisService.getCacheObject("user:" + username);
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         if (user != null){
             log.info("current user : {}", user);
             // 获取用户授权
-            List<AdminRole> roles = userClient.getRolesByUserId(user.getId());
+            List<String> roles = user.getRolesNme();
             // 声明授权文件
-            for (AdminRole role : roles){
-                if (role != null && role.getName() != null){
+            for (String role : roles){
+                if (StringUtils.isNotBlank(role)){
                     // 权限名限制ROLE_XXX
-                    GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(StringUtils.join("ROLE_", role.getName()));
+                    GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(StringUtils.join("ROLE_", role));
                     grantedAuthorities.add(grantedAuthority);
                 }
             }
         }
         log.info("granted authorities :{}", grantedAuthorities);
+        long end = System.currentTimeMillis();
+        log.info("loadUserByUsername耗费[{}]ms", end - start);
         return new User(user.getUserName(), user.getPassword(), grantedAuthorities);
     }
 }

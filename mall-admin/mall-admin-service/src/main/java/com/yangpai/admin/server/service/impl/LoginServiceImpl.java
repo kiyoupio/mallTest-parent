@@ -2,6 +2,7 @@ package com.yangpai.admin.server.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.yangpai.admin.core.dto.LoginRequestDTO;
+import com.yangpai.admin.core.entity.AdminRole;
 import com.yangpai.admin.core.entity.AdminUser;
 import com.yangpai.admin.server.constant.AdminConstants;
 import com.yangpai.admin.server.service.AdminUserService;
@@ -19,9 +20,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * 用户登录服务实现类
@@ -31,6 +30,12 @@ import java.util.Collections;
 @Service
 @Slf4j
 public class LoginServiceImpl implements LoginService {
+    /**
+     * redis服务
+     */
+    @Resource
+    private RedisService redisService;
+
     /**
      * http调用
      */
@@ -57,13 +62,24 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public ResponseEntity<OAuth2AccessToken> login(LoginRequestDTO loginRequestDTO) {
+        long start = System.currentTimeMillis();
         AdminUser user = adminUserService.getOne(new LambdaQueryWrapper<AdminUser>()
-                .select(AdminUser::getUserName).select(AdminUser::getPassword)
+                .select(AdminUser::getId).select(AdminUser::getUserName).select(AdminUser::getPassword)
                 .eq(AdminUser::getUserName, loginRequestDTO.getUsername()));
-        log.info("{}:登录获取user:{}", this.getClass().getSimpleName(), user.toString());
+        List<AdminRole> adminRoles = adminUserService.getRolesByUserId(user.getId());
+        List<String> roles = new ArrayList<>();
+        for (AdminRole adminRole : adminRoles) {
+            roles.add(adminRole.getName());
+        }
+        user.setRolesNme(roles);
+        log.info("{}:登录获取user:{}", this.getClass().getSimpleName(), user);
+        long midd = System.currentTimeMillis();
+        log.info("第一条查询语句的耗时[{}]ms", midd - start);
         if (!EncodeUtil.matches(loginRequestDTO.getPassword(), user.getPassword())){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        log.info("密码匹配耗时[{}]ms", System.currentTimeMillis() - midd);
+        redisService.setCacheObject("user:" + loginRequestDTO.getUsername(), user);
         // 请求参数
         // map-链表：一个key多个value
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>(4);
@@ -72,8 +88,12 @@ public class LoginServiceImpl implements LoginService {
         map.put(AdminConstants.GRANT_TYPE_KEY, Collections.singletonList(oAuth2ProtectedResourceDetails.getGrantType()));
         map.put(AdminConstants.SCOPE_KEY, oAuth2ProtectedResourceDetails.getScope());
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(map, httpHeaders);
+        long mid = System.currentTimeMillis();
         // 请求到授权服务器，将授权完的用户信息存到授权服务器，并申请令牌
-        return restTemplate.exchange(oAuth2ProtectedResourceDetails.getAccessTokenUri(), HttpMethod.POST,
+        ResponseEntity<OAuth2AccessToken> responseEntity = restTemplate.exchange(oAuth2ProtectedResourceDetails.getAccessTokenUri(), HttpMethod.POST,
                 httpEntity, OAuth2AccessToken.class);
+        long end = System.currentTimeMillis();
+        log.info("第一阶段耗费[{}]ms,第二阶段耗费[{}]ms", mid - start, end -mid);
+        return responseEntity;
     }
 }

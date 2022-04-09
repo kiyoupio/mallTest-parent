@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户信息实体
@@ -80,4 +81,10 @@ public class AdminUser extends BaseEntity {
      */
     @TableField(exist = false)
     private Long[] roleIds;
+
+    /**
+     * 瞬时属性，用户的角色列表名，如：[ADMIN、USER]
+     */
+    @TableField(exist = false)
+    private List<String> rolesNme;
 }
