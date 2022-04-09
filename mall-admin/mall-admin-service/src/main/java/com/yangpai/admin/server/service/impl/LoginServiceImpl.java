@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 用户登录服务实现类
@@ -62,6 +63,10 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public ResponseEntity<OAuth2AccessToken> login(LoginRequestDTO loginRequestDTO) {
+        // 避免多次重复登录
+        if (redisService.existKey("user:" + loginRequestDTO.getUsername())){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         long start = System.currentTimeMillis();
         AdminUser user = adminUserService.getOne(new LambdaQueryWrapper<AdminUser>()
                 .select(AdminUser::getId).select(AdminUser::getUserName).select(AdminUser::getPassword)
@@ -79,7 +84,7 @@ public class LoginServiceImpl implements LoginService {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         log.info("密码匹配耗时[{}]ms", System.currentTimeMillis() - midd);
-        redisService.setCacheObject("user:" + loginRequestDTO.getUsername(), user);
+        redisService.setCacheObject("user:" + loginRequestDTO.getUsername(), user, 30, TimeUnit.MINUTES);
         // 请求参数
         // map-链表：一个key多个value
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>(4);
