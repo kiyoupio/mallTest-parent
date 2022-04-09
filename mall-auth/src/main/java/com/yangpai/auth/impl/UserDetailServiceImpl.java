@@ -1,7 +1,6 @@
 package com.yangpai.auth.impl;
 
 import com.yangpai.admin.core.entity.AdminUser;
-import com.yangpai.auth.client.UserClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,12 +28,6 @@ public class UserDetailServiceImpl implements UserDetailsService {
      */
     @Resource
     private RedisService redisService;
-
-    /**
-     * 远程调用客户端
-     */
-    @Resource
-    private UserClient userClient;
 
     /**
      * 根据用户名加载用户信息
