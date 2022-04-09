@@ -1,9 +1,7 @@
 package com.yangpai.auth.impl;
 
-import com.yangpai.admin.core.entity.AdminRole;
 import com.yangpai.admin.core.entity.AdminUser;
 import com.yangpai.auth.client.UserClient;
-import com.yangpai.auth.impl.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
@@ -53,9 +51,10 @@ public class UserDetailServiceImpl implements UserDetailsService {
         if (user != null){
             log.info("current user : {}", user);
             // 获取用户授权
-            List<String> roles = user.getRolesNme();
+            List<String> roles = user.getRolesName();
             // 声明授权文件
             for (String role : roles){
+                log.info("获取到role:[{}]", role);
                 if (StringUtils.isNotBlank(role)){
                     // 权限名限制ROLE_XXX
                     GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(StringUtils.join("ROLE_", role));

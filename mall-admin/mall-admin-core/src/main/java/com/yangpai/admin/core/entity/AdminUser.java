@@ -86,5 +86,5 @@ public class AdminUser extends BaseEntity {
      * 瞬时属性，用户的角色列表名，如：[ADMIN、USER]
      */
     @TableField(exist = false)
-    private List<String> rolesNme;
+    private List<String> rolesName;
 }

@@ -9,8 +9,6 @@ import com.yangpai.admin.server.service.AdminUserService;
 import com.yangpai.admin.server.service.LoginService;
 import com.yangpai.admin.server.utils.EncodeUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.autoconfigure.security.oauth2.OAuth2ClientProperties;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -65,18 +63,18 @@ public class LoginServiceImpl implements LoginService {
     public ResponseEntity<OAuth2AccessToken> login(LoginRequestDTO loginRequestDTO) {
         // 避免多次重复登录
         if (redisService.existKey("user:" + loginRequestDTO.getUsername())){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("请不要重复登录",HttpStatus.BAD_REQUEST);
         }
         long start = System.currentTimeMillis();
         AdminUser user = adminUserService.getOne(new LambdaQueryWrapper<AdminUser>()
-                .select(AdminUser::getId).select(AdminUser::getUserName).select(AdminUser::getPassword)
+                .select(AdminUser::getId, AdminUser::getUserName, AdminUser::getPassword)
                 .eq(AdminUser::getUserName, loginRequestDTO.getUsername()));
         List<AdminRole> adminRoles = adminUserService.getRolesByUserId(user.getId());
         List<String> roles = new ArrayList<>();
         for (AdminRole adminRole : adminRoles) {
             roles.add(adminRole.getName());
         }
-        user.setRolesNme(roles);
+        user.setRolesName(roles);
         log.info("{}:登录获取user:{}", this.getClass().getSimpleName(), user);
         long midd = System.currentTimeMillis();
         log.info("第一条查询语句的耗时[{}]ms", midd - start);
