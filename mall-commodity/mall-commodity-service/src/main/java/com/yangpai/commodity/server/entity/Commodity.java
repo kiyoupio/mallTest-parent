@@ -63,4 +63,14 @@ public class Commodity extends BaseEntity {
      * 商品类型 1:正常商品 2:回收商品
      */
     private int skuType;
+
+    /**
+     * 商品分类
+     */
+    private int category;
+
+    /**
+     * 商品品牌
+     */
+    private String brand;
 }
