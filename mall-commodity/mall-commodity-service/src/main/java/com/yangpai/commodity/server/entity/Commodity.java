@@ -67,7 +67,8 @@ public class Commodity extends BaseEntity {
     /**
      * 商品分类
      */
-    private int category;
+    private Long categoryId;
+
 
     /**
      * 商品品牌
